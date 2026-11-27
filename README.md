@@ -1,58 +1,75 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# KursusKu
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Project praktikum Pemrograman Web III (Laravel). Gabungan hasil Pertemuan 7 sampai 13.
 
-## About Laravel
+## Fitur
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Pertemuan | Fitur |
+|-----------|-------|
+| 7  | Route -> Controller -> Blade (HomeController) |
+| 9  | Master layout Blade, navbar, Bootstrap + jQuery via Vite, Ajax cek sisa kursi |
+| 10 | Database MySQL, migration, model Course, index/create/store |
+| 11 | Show, Form Request (Store/Update), edit, update, delete |
+| 12 | Participant + Enrollment, foreign key, composite unique, laporan relasional |
+| 13 | Search `q`, filter status, pagination 10/halaman, empty state, Ajax opsional |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requirement
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.3+, Composer, Node.js + npm
+- MySQL (Laragon)
 
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Cara Menjalankan
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
+copy .env.example .env        # Windows (Mac/Linux: cp)
+php artisan key:generate
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Buat database `kursusku` di phpMyAdmin/HeidiSQL, lalu atur `.env`:
 
-## Contributing
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=kursusku
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Lanjutkan:
 
-## Code of Conduct
+```bash
+npm install
+npm install bootstrap @popperjs/core jquery
+php artisan migrate --seed
+npm run dev          # terminal 1 (biarkan berjalan)
+php artisan serve    # terminal 2
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Seeder mengisi 24 kursus (status open/closed/draft) dan 3 peserta dummy.
+Seeder aman dijalankan ulang: `php artisan db:seed`.
 
-## Security Vulnerabilities
+## Halaman
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| URL | Fungsi |
+|-----|--------|
+| `/` | Beranda + ringkasan jumlah data |
+| `/courses` | Daftar kursus (search, filter, pagination) |
+| `/courses/create` | Tambah kursus |
+| `/enrollments/create` | Form pendaftaran + cek kursi (Ajax) |
+| `/enrollments` | Laporan peserta-kursus |
 
-## License
+## Catatan Desain
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- Status kursus memakai `draft / open / closed`. Panduan Pertemuan 12 menyebut `active`;
+  di project ini diganti `open` agar konsisten dengan Pertemuan 10, 11, dan 13.
+  Dropdown pendaftaran hanya menampilkan kursus berstatus `open`.
+- Search dan filter memakai method GET + `withQueryString()`. Form tetap bekerja tanpa JavaScript.
+- Ajax live search (debounce 300 ms) ada di `resources/js/app.js` sebagai peningkatan UX.
+- Sisa kursi = `quota` dikurangi jumlah enrollment.
+
+## Evidence
+
+Letakkan screenshot dan catatan pengujian di folder `evidence/week-XX/`.
+Template tabel uji ada di `docs/`.

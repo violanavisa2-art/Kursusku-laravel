@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Course extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'code',
+        'name',
+        'description',
+        'fee',
+        'quota',
+        'start_date',
+        'status',
+    ];
+
+    protected $casts = [
+        'fee' => 'integer',
+        'quota' => 'integer',
+        'start_date' => 'date',
+    ];
+
+    public function enrollments(): HasMany
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    public function participants(): BelongsToMany
+    {
+        return $this->belongsToMany(Participant::class, 'enrollments')
+            ->withPivot('status')
+            ->withTimestamps();
+    }
+}
